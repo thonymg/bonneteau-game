@@ -29,6 +29,7 @@ class App extends Component {
     interval: 0,
     isWin: false,
     isMessageVisible: false,
+    isBallVisible: true,
     islAlreadyPlayed: false
   };
 
@@ -44,25 +45,28 @@ class App extends Component {
       cupWithBall: Math.floor(Math.random() * 3),
       isMessageVisible: false,
       islAlreadyPlayed: false,
+      isBallVisible: false,
       interval: setInterval(() => {
         this.setState({
           cups: shuffle(this.state.cups),
           count: this.state.count - 1
         });
-      }, 1000)
+      }, 600)
     });
   };
 
   getResult = (id, e) => {
+    if (this.state.count !== 0) return;
     if (this.state.islAlreadyPlayed === true) {
       alert("You are already played");
-
+      return;
     }
 
     this.setState({
       isMessageVisible: true,
       islAlreadyPlayed: true,
-      count: shuffleCount
+      count: shuffleCount,
+      isBallVisible: true
     });
 
     this.state.cupWithBall === id
@@ -79,23 +83,27 @@ class App extends Component {
     const message =
       this.state.isMessageVisible === true ? (
         this.state.isWin === true ? (
-          <h3>You win</h3>
+          <h1>Gagné</h1>
         ) : (
-          <h3>You lose</h3>
+          <h1>Perdu</h1>
         )
       ) : null;
 
     return (
       <div>
-        {message}
         <button onClick={e => this.startGame(e)}>Start Game</button>
         <ul>
           <PoseGroup>
             {this.state.cups.map(id => (
-              <Item key={id} onClick={e => this.getResult(id, e)} />
+              <Item key={id} onClick={e => this.getResult(id, e)}>
+                {this.state.isBallVisible && id === this.state.cupWithBall ? (
+                  <sup className={"ball"} />
+                ) : null}
+              </Item>
             ))}
           </PoseGroup>
         </ul>
+        {message}
       </div>
     );
   }
